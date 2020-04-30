@@ -1,0 +1,156 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Recursia
+{    
+    class Program
+    {
+        static int i = 0;
+        static int j = 0;
+        static int k = 0;
+        static int count1 = 0;
+        static int count2 = 0;
+        static void multiply(int[,] A, int[,] B, int n, int[,] C)
+        {           
+                if (i < n)
+                {
+                    
+                    if (j < n)
+                    {
+                        if (k < n)
+                        {
+                           
+                           C[i, j] = C[i,j] + A[i, k] * B[k, j];
+                           k++;                             
+                           multiply(A, B, n, C);
+                           count1++;
+                            
+
+                        }
+                        k = 0;
+                        j++;
+                        multiply(A, B, n, C);
+                    }
+                    j = 0;
+                    i++;
+                    multiply(A, B, n, C);
+                }
+            
+
+        }
+        static int[,,] multiplyodnorazove(int[,] A, int[,] B, int n)
+        {
+
+            int[,,] matrix = new int[n, n, n + 1];
+            for (int i = 0; i < n; i++)
+            {
+
+                for (int j = 0; j < n; j++)
+                {
+                    matrix[i, j, 0] = 0;
+                    for (int k = 0; k < n; k++)
+                    {
+                        matrix[i, j, k + 1] = matrix[i, j, k] + A[i, k] * B[k, j];
+                        count2 += 2;
+                    }
+                }
+            }
+            return matrix;
+
+        }
+        static void display(int n, int[,] C)
+        {
+            int i, j;
+            for (i = 0; i < n; i++)
+            {
+                for (j = 0; j < n; j++)
+                {
+                    Console.Write(String.Format("{0,3}", C[i,j]));
+                }
+                Console.WriteLine();
+            }
+        }
+        static void displayC(int n, int[,,] C)
+        {
+
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < n; j++)
+                {
+
+                    Console.Write(String.Format("{0,3}", C[i, j, n]));
+
+                }
+                Console.WriteLine();
+            }
+
+
+        }
+        static int [,] GetMatrixA( int n)
+        {            
+            int[,] matrix = new int[n, n];
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < n ; j++)
+                {
+                 
+                    if (i == j || i + j == n - 1)
+                        matrix[i, j] = 1;
+                    if (i < j && i >= n - j)
+                        matrix[i, j] = 1;
+                    if (i > j && i < n - j)
+                        matrix[i, j] = 1;
+                }
+            }
+            return matrix;
+        }
+        static int[,] GetMatrixB( int n)
+        {
+            Random r = new Random();
+            int[,] matrix = new int[n, n];
+            for (int i = 0; i < n ; i++)
+            {
+                for (int j = i; j < n - i; j++)
+                {                    
+                    matrix[n - i - 1, j] = r.Next(1,10);
+                }
+            }
+            return matrix;
+        }       
+               
+        static void Main(string[] args)
+        {
+            int n, i, j, k;
+            Console.Write(" Введiть розмiрнiсть матриць (n) : ");
+            n = int.Parse(Console.ReadLine());
+            
+            int[,] A = new int[n, n];
+            int[,] B = new int[n, n];
+            int[,] CR = new int[n, n];
+            int[,,] CO = new int[n, n, n + 1];
+
+            A = GetMatrixA(n);
+            B = GetMatrixB(n);
+            multiply(A, B, n, CR);
+            CO = multiplyodnorazove(A, B, n);
+
+
+            Console.WriteLine(" Матриця А");
+            display(n,A);
+            Console.WriteLine(" Матриця B");
+            display(n,B);         
+            
+
+            Console.WriteLine(" Matrix C is (recursia): ");
+            display(n, CR);
+            Console.WriteLine(" Кiлькiсть операцiй(рекурсiя) :"+count1);
+            Console.WriteLine(" Matrix C is (odnorazove): ");
+            displayC(n, CO);
+            Console.WriteLine(" Кiлькiсть операцiй(одноразове) :" + count2);
+            Console.ReadKey();
+        }
+    }
+}
